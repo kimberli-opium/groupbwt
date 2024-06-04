@@ -2,28 +2,18 @@
 
 namespace App\ValueObject;
 
-class Transaction
+readonly class Transaction
 {
     public function __construct(
-        private readonly string $bin,
-        private readonly float $amount,
-        private readonly string $currency,
+        public string $bin,
+        public float  $amount,
+        public string $currency,
     )
     {
     }
 
-    public function getBin(): string
+    public function isCurrencyEuro(): bool
     {
-        return $this->bin;
-    }
-
-    public function getAmount(): float
-    {
-        return $this->amount;
-    }
-
-    public function getCurrency(): string
-    {
-        return $this->currency;
+        return $this->currency === 'EUR';
     }
 }

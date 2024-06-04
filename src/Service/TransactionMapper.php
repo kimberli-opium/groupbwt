@@ -19,10 +19,10 @@ class TransactionMapper
         $lines = explode("\n", trim($fileContent));
 
         foreach ($lines as $line) {
-            $transactionData = json_decode($line, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
+            if (!json_validate($line)) {
                 throw new RuntimeException("Invalid JSON format: $line");
             }
+            $transactionData = json_decode($line, true);
 
             $transaction = new Transaction(
                 $transactionData['bin'],

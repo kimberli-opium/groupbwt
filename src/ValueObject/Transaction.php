@@ -14,6 +14,6 @@ readonly class Transaction
 
     public function isCurrencyEuro(): bool
     {
-        return $this->currency === 'EUR';
+        return strtoupper($this->currency) === 'EUR';
     }
 }

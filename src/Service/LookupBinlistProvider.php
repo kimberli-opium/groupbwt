@@ -6,10 +6,10 @@ use App\ValueObject\CardInfo;
 use App\ValueObject\Transaction;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-readonly class LookupBinlistProvider implements BinProvider
+class LookupBinlistProvider implements BinProvider
 {
     public function __construct(
-        private HttpClientInterface $client
+        private readonly HttpClientInterface $client
     ) {
     }
 

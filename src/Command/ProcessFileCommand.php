@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Service\CommissionCalculatorService;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,7 +31,15 @@ class ProcessFileCommand extends Command
         $filePath = $input->getArgument('filePath');
 
         try {
-            $commissions = $this->commissionCalculatorService->calculate($filePath);
+
+            $fileContent = file_get_contents($filePath);
+            if ($fileContent === false) {
+                throw new RuntimeException("Unable to read file: $filePath");
+            }
+
+            var_dump($fileContent);
+            die();
+            $commissions = $this->commissionCalculatorService->calculate($fileContent);
 
             foreach ($commissions as $commission) {
                 $output->writeln(sprintf('Commission: %f', $commission));

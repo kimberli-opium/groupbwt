@@ -7,15 +7,9 @@ use RuntimeException;
 
 class TransactionMapper
 {
-    public function map(string $filePath): array
+    public function map(string $fileContent): array
     {
         $transactions = [];
-
-        $fileContent = file_get_contents($filePath);
-        if ($fileContent === false) {
-            throw new RuntimeException("Unable to read file: $filePath");
-        }
-
         $lines = explode("\n", trim($fileContent));
 
         foreach ($lines as $line) {

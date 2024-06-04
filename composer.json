@@ -66,6 +66,7 @@
         }
     },
     "require-dev": {
+        "phpstan/phpstan": "^1.11",
         "symfony/browser-kit": "7.1.*",
         "symfony/css-selector": "7.1.*",
         "symfony/phpunit-bridge": "^7.1"

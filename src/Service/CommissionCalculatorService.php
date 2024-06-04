@@ -8,34 +8,22 @@ use App\ValueObject\Transaction;
 readonly class CommissionCalculatorService
 {
     public function __construct(
-        private TransactionMapper $transactionMapper,
         private BinProvider $binProvider,
         private RateProvider $rateProvider,
     ) {
     }
 
-    public function calculate(string $filePath): array
+    public function calculate(Transaction $transaction): float
     {
-        /** @var Transaction[] $transactions */
-        $transactions = $this->transactionMapper->map($filePath);
+        $cardInfo = $this->binProvider->getCardInfo($transaction);
+        $countryAlpha2Code = $cardInfo->countryAlpha2Code;
 
-        $commissions = [];
+        $exchangeRate = $this->rateProvider->getRateData($transaction);
+        $fixedAmount = $this->calculateFixedAmount($transaction, $this->rateProvider, $exchangeRate);
 
-        foreach ($transactions as $transaction) {
-            $cardInfo = $this->binProvider->getCardInfo($transaction);
-            $countryAlpha2Code = $cardInfo->countryAlpha2Code;
+        $commissionRate = $this->getCommissionRate($cardInfo, $countryAlpha2Code);
 
-            $exchangeRate = $this->rateProvider->getRateData($transaction);
-
-            $fixedAmount = $this->calculateFixedAmount($transaction, $this->rateProvider, $exchangeRate);
-
-            $commissionRate = $this->getCommissionRate($cardInfo, $countryAlpha2Code);
-            $commission = $this->calculateCommission($fixedAmount, $commissionRate);
-
-            $commissions[] = $commission;
-        }
-
-        return $commissions;
+        return $this->calculateCommission($fixedAmount, $commissionRate);
     }
 
     private function calculateFixedAmount(

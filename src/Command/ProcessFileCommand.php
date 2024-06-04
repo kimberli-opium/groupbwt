@@ -3,6 +3,8 @@
 namespace App\Command;
 
 use App\Service\CommissionCalculatorService;
+use App\Service\TransactionMapper;
+use App\ValueObject\Transaction;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,7 +15,8 @@ use Symfony\Component\Yaml\Exception\ExceptionInterface;
 class ProcessFileCommand extends Command
 {
     public function __construct(
-        private readonly CommissionCalculatorService $commissionCalculatorService
+        private readonly CommissionCalculatorService $commissionCalculatorService,
+        private readonly TransactionMapper $transactionMapper
     ) {
         parent::__construct();
     }
@@ -37,11 +40,11 @@ class ProcessFileCommand extends Command
                 throw new RuntimeException("Unable to read file: $filePath");
             }
 
-            var_dump($fileContent);
-            die();
-            $commissions = $this->commissionCalculatorService->calculate($fileContent);
+            /** @var Transaction[] $transactions */
+            $transactions = $this->transactionMapper->map($fileContent);
 
-            foreach ($commissions as $commission) {
+            foreach ($transactions as $transaction) {
+                $commission = $this->commissionCalculatorService->calculate($transaction);
                 $output->writeln(sprintf('Commission: %f', $commission));
             }
 
